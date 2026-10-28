@@ -9,7 +9,8 @@
 
   const state = {
     query: "",
-    category: "All"
+    category: "All",
+    activeLeaderboardSlug: "ping-pong-v2"
   };
 
   const els = {
@@ -17,6 +18,7 @@
     allGrid: document.getElementById("all-grid"),
     trendGrid: document.getElementById("trend-grid"),
     leaderboardPanel: document.getElementById("leaderboard-panel"),
+    leaderboardTabs: document.getElementById("lb-game-tabs"),
     recentSection: document.getElementById("recent-section"),
     recentRail: document.getElementById("recent-rail"),
     categoryBar: document.getElementById("category-bar"),
@@ -60,12 +62,12 @@
 
     return `
       <article class="game-card" style="--tint:${game.accent}" data-slug="${game.slug}">
-        <a class="gc-thumb" href="games/${game.slug}/index.html" data-play="${game.slug}">
+        <a class="gc-thumb" href="games/${game.slug}/" data-play="${game.slug}">
           ${badge}
-          <button class="gc-fav ${isFav ? "active" : ""}" data-fav="${game.slug}" aria-label="Toggle favorite" title="Save to favorites">${ICONS.heart}</button>
           <img src="${game.thumbnail}" alt="${escapeHtml(game.title)} thumbnail" loading="lazy" width="400" height="300">
           <span class="gc-play">${ICONS.play}</span>
         </a>
+        <button class="gc-fav ${isFav ? "active" : ""}" data-fav="${game.slug}" aria-label="Toggle favorite" title="Save to favorites">${ICONS.heart}</button>
         <div class="gc-body">
           <div class="gc-title-row">
             <h3 class="gc-title">${escapeHtml(game.title)}</h3>
@@ -75,7 +77,7 @@
           <p class="gc-desc">${escapeHtml(game.description)}</p>
           <div class="gc-footer">
             <div class="gc-cats">${cats}</div>
-            <a class="gc-playbtn" href="games/${game.slug}/index.html" data-play="${game.slug}">${ICONS.play} Play</a>
+            <a class="gc-playbtn" href="games/${game.slug}/" data-play="${game.slug}">${ICONS.play} Play</a>
           </div>
         </div>
       </article>
@@ -94,22 +96,145 @@
     els.trendGrid.innerHTML = trending.map((g) => cardHTML(g)).join("");
   }
 
-  function leaderboardRowHTML(p, i) {
-    return `
-      <div class="lb-row">
-        <div class="lb-rank">${i + 1}</div>
-        <div class="lb-avatar">${escapeHtml((p.displayName || "?").charAt(0).toUpperCase())}</div>
-        <div class="lb-info">
-          <div class="lb-name">${escapeHtml(p.displayName || "Player")} ${i < 3 ? `<span class="lb-trophy" style="display:inline-flex;vertical-align:-3px;">${ICONS.trophy}</span>` : ""}</div>
-          <div class="lb-game">Top game: ${escapeHtml(p.gameTitle || "—")}</div>
-        </div>
-        <div class="lb-xp"><b>${Math.round(p.score || 0).toLocaleString()}</b><span>PTS</span></div>
-      </div>
-    `;
+  const LEADERBOARD_CONFIG = [
+    {
+      slug: "ping-pong-v2",
+      title: "Ping Pong",
+      icon: "🏓",
+      metricName: "Winning Margin",
+      unit: "pts margin",
+      formatScore: (s) => `+${s} pts`
+    },
+    {
+      slug: "balloon-blast",
+      title: "Balloon Blast",
+      icon: "🎈",
+      metricName: "High Score",
+      unit: "pts",
+      formatScore: (s) => `${Math.round(s).toLocaleString()} pts`
+    },
+    {
+      slug: "memory-card",
+      title: "Memory Card",
+      icon: "🧠",
+      metricName: "Score",
+      unit: "pts",
+      formatScore: (s) => `${Math.round(s).toLocaleString()} pts`
+    },
+    {
+      slug: "paint-tag-arena",
+      title: "Paint Tag Arena",
+      icon: "🎨",
+      metricName: "Rounds Won",
+      unit: "rounds",
+      formatScore: (s) => `${s} rounds`
+    },
+    {
+      slug: "tic-tac-toe-candyland",
+      title: "Candyland Tic-Tac-Toe",
+      icon: "🍬",
+      metricName: "Win Streak",
+      unit: "wins",
+      formatScore: (s) => `🔥 ${s} streak`
+    },
+    {
+      slug: "fruit-slash-survival",
+      title: "Fruit Slash (Survival)",
+      icon: "🍉",
+      metricName: "Survival Score",
+      unit: "pts",
+      formatScore: (s) => `${Math.round(s).toLocaleString()} pts`
+    },
+    {
+      slug: "fruit-slash-time-attack",
+      title: "Fruit Slash (Time Attack)",
+      icon: "⏱️",
+      metricName: "Time Attack Score",
+      unit: "pts",
+      formatScore: (s) => `${Math.round(s).toLocaleString()} pts`
+    },
+    {
+      slug: "superman-swing",
+      title: "Superman Swing",
+      icon: "🦸",
+      metricName: "High Score",
+      unit: "pts",
+      formatScore: (s) => `${Math.round(s).toLocaleString()} pts`
+    },
+    {
+      slug: "outbound",
+      title: "Outbound",
+      icon: "🏹",
+      metricName: "Highest Level",
+      unit: "level",
+      formatScore: (s) => `Level ${s}`
+    },
+    {
+      slug: "gravity-run",
+      title: "Gravity Run",
+      icon: "🦖",
+      metricName: "Rounds Won",
+      unit: "rounds",
+      formatScore: (s) => `${s} rounds`
+    },
+    {
+      slug: "tank-wars",
+      title: "Tank Wars",
+      icon: "⚔️",
+      metricName: "Local 2P Match",
+      isLocalOnly: true,
+      description: "Tank Wars is a local 2-player battle. Match wins and combat statistics are recorded locally on your device in StatsManager."
+    }
+  ];
+
+  function renderLeaderboardTabs() {
+    if (!els.leaderboardTabs) return;
+    els.leaderboardTabs.innerHTML = LEADERBOARD_CONFIG.map((cfg) => {
+      const active = cfg.slug === state.activeLeaderboardSlug ? " active" : "";
+      return `<button class="lb-tab-btn${active}" data-lb-slug="${cfg.slug}" type="button">${cfg.icon} ${escapeHtml(cfg.title)}</button>`;
+    }).join("");
   }
 
   function renderLeaderboard() {
+    renderLeaderboardTabs();
     if (!els.leaderboardPanel) return;
+
+    const currentCfg = LEADERBOARD_CONFIG.find((c) => c.slug === state.activeLeaderboardSlug) || LEADERBOARD_CONFIG[0];
+
+    // Local-only game handler (Tank Wars)
+    if (currentCfg.isLocalOnly) {
+      let statsHTML = "";
+      try {
+        const raw = localStorage.getItem("tank_wars_stats_v1");
+        if (raw) {
+          const stats = JSON.parse(raw);
+          const p1Wins = stats.p1Wins || 0;
+          const p2Wins = stats.p2Wins || 0;
+          const matches = stats.matchesPlayed || (p1Wins + p2Wins);
+          statsHTML = `
+            <div style="margin-top:16px;padding:16px;border-radius:var(--radius-md);background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.25);text-align:left;max-width:440px;margin-left:auto;margin-right:auto;">
+              <h4 style="color:#d9822b;margin-bottom:8px;font-size:14px;">📊 Local Matches on this Device</h4>
+              <p style="font-size:13px;color:var(--text-1);margin:2px 0;">Total Matches Played: <b>${matches}</b></p>
+              <p style="font-size:13px;color:var(--text-1);margin:2px 0;">Player 1 Wins: <b>${p1Wins}</b></p>
+              <p style="font-size:13px;color:var(--text-1);margin:2px 0;">Player 2 Wins: <b>${p2Wins}</b></p>
+            </div>
+          `;
+        }
+      } catch (e) {}
+
+      els.leaderboardPanel.innerHTML = `
+        <div class="lb-header-meta">
+          <div class="lb-game-title">${currentCfg.icon} ${escapeHtml(currentCfg.title)}</div>
+          <div class="lb-metric-badge">🎮 Local 2-Player Only</div>
+        </div>
+        <div class="lb-empty-state">
+          <h3>Local Multiplayer</h3>
+          <p style="max-width:520px;margin:0 auto 12px;line-height:1.6;">${escapeHtml(currentCfg.description)}</p>
+          ${statsHTML}
+        </div>
+      `;
+      return;
+    }
 
     if (!window.Arcadia || !Arcadia.isConfigured) {
       els.leaderboardPanel.innerHTML = `
@@ -120,17 +245,95 @@
       return;
     }
 
-    els.leaderboardPanel.innerHTML = `<div class="empty-state"><p>Loading leaderboard…</p></div>`;
-    Arcadia.getGlobalLeaderboard(10).then((rows) => {
-      if (!rows.length) {
+    // Loading state
+    els.leaderboardPanel.innerHTML = `
+      <div class="lb-header-meta">
+        <div class="lb-game-title">${currentCfg.icon} ${escapeHtml(currentCfg.title)}</div>
+        <div class="lb-metric-badge">🏆 Metric: ${escapeHtml(currentCfg.metricName)}</div>
+      </div>
+      <div class="lb-loading-state">
+        <div class="lb-spinner"></div>
+        <p>Loading ${escapeHtml(currentCfg.title)} leaderboard…</p>
+      </div>
+    `;
+
+    Arcadia.getGameLeaderboard(currentCfg.slug, 10).then((res) => {
+      // Prevent race conditions if user switched tabs
+      if (state.activeLeaderboardSlug !== currentCfg.slug) return;
+
+      if (!res.success) {
+        if (res.reason === "index-required") {
+          const errMsg = res.error && res.error.message ? res.error.message : "";
+          const linkMatch = errMsg.match(/https:\/\/console\.firebase\.google\.com[^\s]*/);
+          const indexUrl = linkMatch ? linkMatch[0] : null;
+          els.leaderboardPanel.innerHTML = `
+            <div class="lb-header-meta">
+              <div class="lb-game-title">${currentCfg.icon} ${escapeHtml(currentCfg.title)}</div>
+              <div class="lb-metric-badge">⚙️ Firestore Index Required</div>
+            </div>
+            <div class="lb-index-alert">
+              <h4>⚠️ Firestore Composite Index Needed</h4>
+              <p>Per-game leaderboards require a composite index on <code>scores (gameSlug ASC, score DESC)</code>.</p>
+              ${indexUrl ? `<p style="margin-top:10px;"><a href="${indexUrl}" target="_blank" rel="noopener">👉 Click here to create the required Firestore Index automatically in Firebase Console</a></p>` : `<p style="margin-top:8px;">Open your Firebase Console → Firestore → Indexes to add an index on the <code>scores</code> collection.</p>`}
+            </div>
+          `;
+          return;
+        }
+
         els.leaderboardPanel.innerHTML = `
-          <div class="empty-state">
-            <h3>No scores yet</h3>
-            <p>Sign in and play any game — your best score will show up here first.</p>
-          </div>`;
+          <div class="lb-header-meta">
+            <div class="lb-game-title">${currentCfg.icon} ${escapeHtml(currentCfg.title)}</div>
+            <div class="lb-metric-badge">🏆 Metric: ${escapeHtml(currentCfg.metricName)}</div>
+          </div>
+          <div class="lb-error-state">
+            <h3>Unable to load leaderboard</h3>
+            <p>Please check your internet connection and Firebase rules configuration.</p>
+          </div>
+        `;
         return;
       }
-      els.leaderboardPanel.innerHTML = rows.map(leaderboardRowHTML).join("");
+
+      const rows = res.rows || [];
+      if (!rows.length) {
+        els.leaderboardPanel.innerHTML = `
+          <div class="lb-header-meta">
+            <div class="lb-game-title">${currentCfg.icon} ${escapeHtml(currentCfg.title)}</div>
+            <div class="lb-metric-badge">🏆 Metric: ${escapeHtml(currentCfg.metricName)}</div>
+          </div>
+          <div class="lb-empty-state">
+            <h3>No scores recorded yet</h3>
+            <p>Sign in and play ${escapeHtml(currentCfg.title)} — be the first champion to set a record!</p>
+          </div>
+        `;
+        return;
+      }
+
+      const rowsHTML = rows.map((p, i) => {
+        let dateText = "";
+        if (p.updatedAt && typeof p.updatedAt.toDate === "function") {
+          dateText = p.updatedAt.toDate().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+        }
+        const formattedScore = currentCfg.formatScore ? currentCfg.formatScore(p.score || 0) : String(p.score || 0);
+        return `
+          <div class="lb-row">
+            <div class="lb-rank">${i + 1}</div>
+            <div class="lb-avatar">${escapeHtml((p.displayName || "?").charAt(0).toUpperCase())}</div>
+            <div class="lb-info">
+              <div class="lb-name">${escapeHtml(p.displayName || "Player")} ${i < 3 ? `<span class="lb-trophy" style="display:inline-flex;vertical-align:-3px;">${ICONS.trophy}</span>` : ""}</div>
+              <div class="lb-game">${dateText ? `Record set on ${escapeHtml(dateText)}` : escapeHtml(currentCfg.metricName)}</div>
+            </div>
+            <div class="lb-xp"><b>${formattedScore}</b><span>${escapeHtml(currentCfg.unit.toUpperCase())}</span></div>
+          </div>
+        `;
+      }).join("");
+
+      els.leaderboardPanel.innerHTML = `
+        <div class="lb-header-meta">
+          <div class="lb-game-title">${currentCfg.icon} ${escapeHtml(currentCfg.title)}</div>
+          <div class="lb-metric-badge">🏆 Metric: ${escapeHtml(currentCfg.metricName)}</div>
+        </div>
+        ${rowsHTML}
+      `;
     });
   }
   window.renderArcadiaLeaderboard = renderLeaderboard;
@@ -177,7 +380,7 @@
     els.recentRail.innerHTML = recent
       .map(
         (r) => `
-        <a class="recent-card" href="games/${r.game.slug}/index.html" data-play="${r.game.slug}">
+        <a class="recent-card" href="games/${r.game.slug}/" data-play="${r.game.slug}">
           <img src="${r.game.thumbnail}" alt="${escapeHtml(r.game.title)}" loading="lazy" width="200" height="150">
           <div class="rc-title">${escapeHtml(r.game.title)}</div>
         </a>`
@@ -244,6 +447,17 @@
       renderCategoryBar();
       renderAllGames();
       document.getElementById("all-games")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
+    const lbTab = e.target.closest("[data-lb-slug]");
+    if (lbTab) {
+      const slug = lbTab.getAttribute("data-lb-slug");
+      if (slug && slug !== state.activeLeaderboardSlug) {
+        state.activeLeaderboardSlug = slug;
+        renderLeaderboard();
+      }
+      return;
     }
   }
 

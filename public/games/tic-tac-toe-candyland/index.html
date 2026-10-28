@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>if(!location.pathname.endsWith('/')&&!location.pathname.endsWith('.html'))location.replace(location.pathname+'/'+location.search+location.hash);</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Candy Land Tic Tac Toe</title>
@@ -50,9 +51,14 @@
     </section>
 
     <div class="bottom-row">
-      <button class="icon-btn" id="settings-btn" title="Settings">
-        <img src="assets/icons/settings.svg" alt="Settings">
-      </button>
+      <div style="display:flex;gap:10px;">
+        <a class="icon-btn" href="../../index.html" id="portal-btn" title="Back to Arcadia" aria-label="Back to Arcadia" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">
+          <img src="assets/icons/back.svg" alt="Back to Arcadia">
+        </a>
+        <button class="icon-btn" id="settings-btn" title="Settings" aria-label="Settings">
+          <img src="assets/icons/settings.svg" alt="Settings">
+        </button>
+      </div>
       <div class="best-streak">
         🏆 Best Streak: <span id="best-streak-num">0</span>
       </div>
@@ -77,6 +83,7 @@
   <script src="js/storage.js"></script>
   <script src="js/settings.js"></script>
   <script src="js/audio.js"></script>
+  <script src="../../js/arcadia-shell.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

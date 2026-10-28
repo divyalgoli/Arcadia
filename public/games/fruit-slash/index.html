@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>if(!location.pathname.endsWith('/')&&!location.pathname.endsWith('.html'))location.replace(location.pathname+'/'+location.search+location.hash);</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Fruit Slash - 2D Landscape Web Game</title>
@@ -42,6 +43,7 @@
                 </div>
 
                 <div class="menu-bottom-bar">
+                    <a href="../../index.html" class="secondary-btn" id="menu-exit-portal-btn" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">🏠 Arcadia</a>
                     <button id="menu-settings-btn" class="secondary-btn">⚙️ Settings</button>
                     <button id="menu-highscores-btn" class="secondary-btn">🏆 Leaderboards</button>
                 </div>
@@ -181,6 +183,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="../../js/firebase-config.js"></script>
         <script src="../../js/arcadia-cloud.js"></script>
+        <script src="../../js/arcadia-shell.js"></script>
     <script src="js/bundle.js"></script>
 
 </body>

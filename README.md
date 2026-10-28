@@ -1,81 +1,142 @@
-# Arcadia
+# Arcadia 2.0 — Modern Browser Game Portal
 
-A modern, dark-first browser game portal (inspired by Poki / CrazyGames, original branding)
-built to host independent HTML/CSS/JS games under one homepage.
+[![Static Hosting](https://img.shields.io/badge/Hosting-Static%20Jamstack-blue.svg)](https://github.com/divyalgoli/Arcadia)
+[![Games](https://img.shields.io/badge/Games-10%20Playable-green.svg)](https://github.com/divyalgoli/Arcadia)
+[![Progression](https://img.shields.io/badge/Progression-XP%20%26%2018%20Achievements-purple.svg)](https://github.com/divyalgoli/Arcadia)
+[![License](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
 
-## Structure
+A modern, fast, responsive web gaming portal built with vanilla HTML5, CSS3, and JavaScript, featuring a unified progression engine, 18 unlockable achievements, player profile cards, cloud synchronization, and live per-game leaderboards powered by Firebase.
+
+---
+
+## 🎮 The Game Catalog
+
+Arcadia hosts 10 independent, fully-featured browser games with dedicated scoring metrics and mobile touch controls:
+
+| # | Game | Category | Scoring Metric | Description |
+| :-: | :--- | :--- | :--- | :--- |
+| 1 | **🏓 Ping-Pong** | Arcade / Sports | Winning Margin (Points) | Classic 2-player paddle rally with responsive AI and customizable rallies. |
+| 2 | **🎈 Balloon Blast** | Casual / Arcade | Pop Count | Pop colorful flying balloons while dodging airborne hazards and bombs. |
+| 3 | **🧠 Memory Card** | Puzzle / Brain | Completion Time (sec) | Test cognitive recall across themed icon decks with speed bonuses. |
+| 4 | **🎨 Paint Tag Arena** | Action / Arena | Territory Turf (%) | Multiplayer-style arena turf battle claiming arena tiles with paint blaster. |
+| 5 | **🍬 Candyland Tic-Tac-Toe** | Strategy / Board | Streak / High Score | Sweet candy-themed classic with multi-level AI and 2-player mode. |
+| 6 | **🍉 Fruit Slash** | Arcade / Reflex | Slices (Survival / Time Attack) | Fast-paced fruit blade action featuring Survival and Time-Attack modes. |
+| 7 | **🦸 Superman Swing** | Physics / Runner | Distance Traveled (m) | Momentum-based pendulum swinging through neon urban skylines. |
+| 8 | **⚔️ Tank Wars** | Action / Strategy | Tanks Eliminated | Tactical artillery tank combat with destructible cover and bullet physics. |
+| 9 | **🏹 Outbound** | Arcade / Reflex | Waves Cleared | Quick-draw archery defense against waves of incoming targets. |
+| 10 | **🦖 Gravity Run** | Endless Runner | Distance (m) | Infinite runner with upside-down gravity inversion mechanics. |
+
+---
+
+## 🚀 Key Features
+
+- **Integrated Player Progression (Arcadia Progression Engine):**
+  - Continuous XP earning across all 10 titles for session completion, milestones, and high scores.
+  - Deterministic Level Curve: Levels 1 through 100 with distinct player rank titles (Rookie, Apprentice, Veteran, Champion, Master, Legend).
+  - Daily login and session bonuses with daily XP caps.
+- **18 Platform Achievements & Badges:**
+  - Category masteries, session milestones, multi-game diversity badges, and secret easter eggs.
+  - Interactive player profile modal featuring badge showcases, session counts, and progress tracking.
+- **Unified Game Shell & In-Game HUD:**
+  - Seamless in-game navigation bar (`arcadia-shell.js`) providing instant pause, fullscreen toggle, audio mute, home navigation, and live XP awards.
+- **Firebase Authentication & Cloud Synchronization:**
+  - Guest-first architecture: Play anonymously right away with automatic local persistence.
+  - One-click account creation / login with email and password.
+  - Smart progression merge: Non-destructive high-water-mark union of local guest progress with cloud saves upon sign-in.
+  - Offline sync queue: Plays offline and automatically flushes pending XP and records once network connectivity is restored.
+- **Per-Game Live Leaderboards:**
+  - Real-time Firestore-backed leaderboards per game with custom unit metrics, rank trophies, and player avatars.
+- **Dark/Light Theme & Responsive Design:**
+  - Mobile-first CSS architecture (`mobile.css`) with fluid `clamp()` typography, virtual touch joysticks, and safe-area notch padding.
+
+---
+
+## 📂 Project Architecture
 
 ```
-GameHub/
-├── index.html              → Homepage / game library
+Arcadia/
+├── index.html              → Portal homepage entry point
 ├── css/
-│   ├── style.css           → Layout, theme tokens, components
-│   └── animations.css      → Keyframes, page-transition, toast
+│   ├── style.css           → Global design tokens, layout, leaderboard, profile modals
+│   ├── animations.css      → Keyframe animations, toasts, micro-interactions
+│   └── mobile.css          → Responsive breakpoints & touch optimizations
 ├── js/
-│   ├── games-data.js       → Game metadata (title, desc, category, thumbnail…)
-│   ├── storage.js          → localStorage helpers (favorites, recently played, theme)
-│   └── main.js             → Rendering, search, filters, theme toggle, transitions
+│   ├── games-data.js       → Catalog metadata, categories, thumbnails & accent colors
+│   ├── storage.js          → Local storage helpers (favorites, recently played, theme)
+│   ├── arcadia-progression.js → Core XP curves, level calculation & 18 achievements
+│   ├── arcadia-shell.js    → In-game HUD overlay, pause, fullscreen & exit shell
+│   ├── arcadia-profile.js  → Player profile modal & badge grid renderer
+│   ├── arcadia-cloud.js    → Firestore client operations & cloud persistence
+│   ├── arcadia-sync.js     → Guest-to-cloud migration & offline sync queue
+│   ├── auth-ui.js          → Firebase auth modal controller & state listeners
+│   ├── firebase-config.js  → Client-side Firebase configuration
+│   ├── mobile-utils.js     → Mobile touch helpers & virtual joystick controllers
+│   └── main.js             → Portal initialization, filters, search & leaderboard tabs
 ├── assets/
-│   ├── icons/logo.svg
-│   └── thumbnails/*.svg    → Card artwork for each game
-└── games/
-    ├── ping-pong/
-    ├── balloon-blast/
-    ├── memory-card/
-    ├── paint-tag-arena/
-    ├── tic-tac-toe-candyland/
-    ├── fruit-slash/
-    ├── superman-swing/
-    └── tank-wars/
+│   ├── icons/              → Brand icons, favicons, vector assets
+│   └── thumbnails/         → Crisp SVG/JPG game artwork
+├── public/                 → Static document root for web hosting (mirrors portal & holds games)
+│   └── games/              → Self-contained HTML5/CSS3/JS game folders
+│       ├── ping-pong/
+│       ├── balloon-blast/
+│       ├── memory-card/
+│       ├── paint-tag-arena/
+│       ├── tic-tac-toe-candyland/
+│       ├── fruit-slash/
+│       ├── superman-swing/
+│       ├── tank-wars/
+│       ├── outbound/
+│       └── gravity-run/
+├── DEPLOYMENT.md           → Static hosting and cloud deployment guide
+├── FIREBASE_SETUP.md       → Firebase Authentication & Firestore configuration guide
+└── serve.json              → Local static server configuration (clean routing)
 ```
 
-Each folder inside `games/` is **completely untouched and independent** — original
-HTML/CSS/JS/asset files, same filenames, same relative paths. The only change made
-inside a game folder is a small snippet appended before `</body>` in its `index.html`
-that adds a floating **Home** + **Fullscreen** button (top-left corner) and records
-the play in "Recently Played." Nothing else in any game was modified.
+---
 
-## Adding a new game
+## 💻 Local Development & Quick Start
 
-1. Drop the game's folder into `games/<your-game-slug>/` (its own `index.html` must
-   be the entry point).
-2. Add one object to the `GAMES` array in `js/games-data.js` (title, description,
-   categories, thumbnail path, accent color).
-3. Optionally add an SVG/PNG thumbnail to `assets/thumbnails/`.
-4. That's it — the homepage grid, search, and category filters pick it up automatically.
+Arcadia has no mandatory build step — it runs directly in any modern web browser.
 
-## Local preview
-
-No build step. From the `GameHub/` folder run any static server, e.g.:
-
+### Option 1: Using `serve` (Recommended)
 ```bash
-python3 -m http.server 8000
+# Install serve if not already present
+npm install -g serve
+
+# Serve the public directory
+serve public -p 8000
 ```
+Open [http://localhost:8000](http://localhost:8000) in your browser.
 
-Then open `http://localhost:8000`.
+### Option 2: Using Python
+```bash
+# Python 3
+python -m http.server 8000 --directory public
+```
+Then visit [http://localhost:8000](http://localhost:8000).
 
-## Deploying
+---
 
-**Netlify:** drag-and-drop the `GameHub` folder (or connect the repo) — no build
-command needed, publish directory is the project root.
+## ☁️ Firebase Configuration
 
-**GitHub Pages:** push `GameHub`'s contents to the repo root (or `/docs`) and enable
-Pages on that branch/folder.
+Arcadia works completely out of the box in guest mode without Firebase. To enable cloud accounts, cross-device progression sync, and global leaderboards:
 
-## Login & the global leaderboard
+1. Create a free project at [Firebase Console](https://console.firebase.google.com).
+2. Enable **Email/Password** under Authentication.
+3. Enable **Cloud Firestore** in production mode.
+4. Add the recommended security rules from [`FIREBASE_SETUP.md`](FIREBASE_SETUP.md).
+5. Copy your Firebase web app config into `js/firebase-config.js` (and `public/js/firebase-config.js`).
 
-Arcadia has a real login system and a cross-game leaderboard (each
-player's single best score, tagged with the game it came from) backed
-by a free Firebase project. See **FIREBASE_SETUP.md** for the one-time
-setup — until that's done, the site still works fine, just with login
-and the leaderboard panel showing a "not set up yet" placeholder.
+---
 
-## Notes
+## 🔒 Security & Privacy
 
-- `games/balloon-blast/js/audio.js` references sound files under `assets/audio/` that
-  were not included in the original game ZIP — this was already the case before
-  integration, and the game's own code already fails silently (with a console warning)
-  if those files are missing. Drop matching `.mp3` files in that folder if you want
-  sound.
-- All thumbnails are original hand-built SVGs (no external images), so they're crisp
-  at any size and add almost nothing to page weight.
+- **Client-Side Secret Isolation:** No private API keys or service account credentials are used in the client code.
+- **Owner-Scoped Firestore Security Rules:** Progression documents (`/progression/{userId}`) and user records (`/users/{userId}`) are protected with owner-only access rules (`request.auth.uid == userId`).
+- **High-Water Mark Validation:** Score and progression uploads validate payload structures, preventing negative score injections or level demotions.
+
+---
+
+## 📄 License
+
+This project is open-source under the MIT License.

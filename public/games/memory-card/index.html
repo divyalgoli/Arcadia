@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>if(!location.pathname.endsWith('/')&&!location.pathname.endsWith('.html'))location.replace(location.pathname+'/'+location.search+location.hash);</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>Memory Card Game - Test Your Memory Skills</title>
@@ -16,9 +17,12 @@
                 <span class="logo-icon">🧠</span>
                 <span class="logo-text">MemoryCard</span>
             </div>
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                <span class="theme-icon">🌙</span>
-            </button>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <a href="../../index.html" class="btn btn-secondary" style="padding:6px 14px;font-size:0.875rem;text-decoration:none;">← Arcadia</a>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -204,5 +208,6 @@
             document.getElementById('passwordError').style.display = 'none';
         });
     </script>
+    <script src="../../js/arcadia-shell.js"></script>
 </body>
 </html>

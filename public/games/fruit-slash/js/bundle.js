@@ -1782,7 +1782,11 @@
             const isNewHS = STORAGE.saveHighScore(this.mode, this.score);
             const highScore = STORAGE.getHighScore(this.mode);
 
-            if (window.Arcadia) Arcadia.submitScore('fruit-slash', 'Fruit Slash', this.score);
+            if (window.Arcadia) {
+                const slashSlug = (this.mode === 'TIME_ATTACK') ? 'fruit-slash-time-attack' : 'fruit-slash-survival';
+                const slashTitle = (this.mode === 'TIME_ATTACK') ? 'Fruit Slash (Time Attack)' : 'Fruit Slash (Survival)';
+                Arcadia.submitScore(slashSlug, slashTitle, this.score);
+            }
 
             if (this.ui) this.ui.showGameOverUI(this.score, highScore, isNewHS, this.mode);
         }

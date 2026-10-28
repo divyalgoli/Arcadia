@@ -21,9 +21,7 @@
   document.getElementById('pauseHomeBtn').addEventListener('click', ()=> showScreen('home'));
   document.getElementById('winHomeBtn').addEventListener('click', ()=> showScreen('home'));
   document.getElementById('exitBtn').addEventListener('click', ()=>{
-    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Baloo 2, sans-serif;font-size:28px;color:#5B5644;background:#EFE58A;text-align:center;padding:20px;">Thanks for playing Ping Pong! 🏓<br>You can close this tab now.</div>';
-    window.close();
-    setTimeout(()=> window.close(), 100);
+    window.location.href = '../../index.html';
   });
 
   /* ============================================================
@@ -262,7 +260,10 @@
     document.getElementById('winOverlay').classList.add('show');
     beep(700,0.4,0.09);
     addResult(name, `${Game.score.a} – ${Game.score.b}`);
-    if (window.Arcadia) Arcadia.submitScore('ping-pong', 'Ping Pong', Math.max(Game.score.a, Game.score.b));
+    if (window.Arcadia) {
+      const margin = Math.max(Game.score.a, Game.score.b) - Math.min(Game.score.a, Game.score.b);
+      Arcadia.submitScore('ping-pong-v2', 'Ping Pong', margin);
+    }
   }
 
   document.getElementById('rematchBtn').addEventListener('click', ()=>{

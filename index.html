@@ -238,11 +238,12 @@
     <div class="container">
       <div class="section-head">
         <div>
-          <span class="eyebrow">Top players</span>
-          <h2 class="section-title">Leaderboard</h2>
-          <p class="section-sub">Every signed-in player's single best score, whichever game it came from.</p>
+          <span class="eyebrow">Hall of Fame</span>
+          <h2 class="section-title">Per-Game Leaderboards</h2>
+          <p class="section-sub">Compare records, winning margins, streaks, and scores across every Arcadia title.</p>
         </div>
       </div>
+      <div class="lb-game-tabs" id="lb-game-tabs" role="tablist" aria-label="Game Leaderboards"></div>
       <div class="leaderboard-panel" id="leaderboard-panel"></div>
     </div>
   </section>
@@ -308,6 +309,137 @@
   </div>
 </footer>
 
+<!-- ================= PLAYER PROFILE MODAL ================= -->
+<div id="profile-modal" class="profile-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+  <div class="profile-modal-backdrop" id="profile-modal-backdrop"></div>
+  <div class="profile-modal-panel">
+    <button class="profile-modal-close" id="profile-modal-close" aria-label="Close profile">&times;</button>
+    
+    <!-- Player Header Card -->
+    <div class="profile-header-card">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="profile-avatar">🎮</div>
+      </div>
+      <div class="profile-identity">
+        <div class="profile-title-row">
+          <h2 id="profile-modal-title" class="profile-name"><span id="profile-name">Guest Player</span></h2>
+          <span class="profile-badge-chip" id="profile-badge-chip">Bronze</span>
+        </div>
+        <p class="profile-subtitle" id="profile-subtitle"><span class="status-dot guest"></span> Local Profile</p>
+        <div class="profile-rank-row">
+          <span class="profile-level-badge">Level <strong id="profile-level">1</strong></span>
+          <span class="profile-rank-title" id="profile-rank">Rookie</span>
+        </div>
+      </div>
+      <div class="profile-auth-actions" id="profile-auth-actions"></div>
+    </div>
+
+    <!-- XP Progress Bar Card -->
+    <div class="profile-xp-card">
+      <div class="profile-xp-info-row">
+        <div class="profile-xp-total">
+          <span class="profile-stat-sub">Lifetime XP</span>
+          <strong id="profile-total-xp">0 XP</strong>
+        </div>
+        <div class="profile-xp-req">
+          <span class="profile-stat-sub">Next Level</span>
+          <span><strong id="profile-cur-xp">0</strong> / <span id="profile-next-xp">300</span> XP</span>
+        </div>
+      </div>
+      <div class="profile-xp-bar-container" id="profile-xp-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Level progress">
+        <div class="profile-xp-bar-fill" id="profile-xp-fill" style="width: 0%;"></div>
+      </div>
+      <div class="profile-xp-sub-row">
+        <span class="profile-xp-pct" id="profile-xp-percent">0%</span>
+        <span class="profile-daily-status">Daily Cap: <strong id="profile-daily-xp">0 / 2,500 XP</strong></span>
+      </div>
+    </div>
+
+    <!-- Platform Stats Grid -->
+    <div class="profile-stats-grid">
+      <div class="profile-stat-box">
+        <span class="profile-stat-num" id="profile-stat-sessions">0</span>
+        <span class="profile-stat-lbl">Sessions Played</span>
+      </div>
+      <div class="profile-stat-box">
+        <span class="profile-stat-num" id="profile-stat-games">0 / 10</span>
+        <span class="profile-stat-lbl">Games Explored</span>
+      </div>
+      <div class="profile-stat-box">
+        <span class="profile-stat-num" id="profile-stat-achievements">0 / 18</span>
+        <span class="profile-stat-lbl">Achievements</span>
+      </div>
+      <div class="profile-stat-box">
+        <span class="profile-stat-num" id="profile-stat-favorite">None yet</span>
+        <span class="profile-stat-lbl">Most Played</span>
+      </div>
+    </div>
+
+    <!-- Achievements Section -->
+    <div class="profile-ach-section">
+      <div class="profile-ach-header">
+        <div class="profile-ach-title-wrap">
+          <h3 class="profile-section-heading">Arcade Achievements</h3>
+          <span class="profile-ach-counter" id="profile-ach-unlocked-count">0 / 18</span>
+        </div>
+        <div class="ach-filter-tabs" role="tablist" aria-label="Achievement Filter">
+          <button type="button" class="ach-tab active" data-ach-tab="all">All (<span id="ach-tab-count-all">18</span>)</button>
+          <button type="button" class="ach-tab" data-ach-tab="unlocked">Unlocked (<span id="ach-tab-count-unlocked">0</span>)</button>
+          <button type="button" class="ach-tab" data-ach-tab="locked">Locked (<span id="ach-tab-count-locked">18</span>)</button>
+        </div>
+      </div>
+      <div class="profile-ach-list" id="profile-achievements-list" tabindex="0" aria-label="Achievements list">
+        <!-- Rendered dynamically by arcadia-profile.js -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= PROGRESSION NOTIFICATION TOAST CONTAINER ================= -->
+<div id="progression-toast-container" class="progression-toast-container" aria-live="polite" role="status"></div>
+
+<!-- ================= GUEST PROGRESSION MIGRATION MODAL ================= -->
+<div id="migration-modal" class="migration-modal" aria-hidden="true">
+  <div class="migration-modal-backdrop" id="migration-modal-backdrop"></div>
+  <div class="migration-modal-panel" role="dialog" aria-modal="true" aria-labelledby="migration-modal-title">
+    <button class="migration-modal-close" id="migration-close-btn" aria-label="Close">&times;</button>
+    <div class="migration-header">
+      <div class="migration-icon">☁️</div>
+      <h3 id="migration-modal-title">Sync Your Progress</h3>
+      <p class="migration-subtitle">We found guest gameplay progress on this browser. Would you like to merge it with your account?</p>
+    </div>
+
+    <div class="migration-comparison-grid">
+      <div class="migration-card guest-card">
+        <div class="migration-card-badge">Guest Progress</div>
+        <div class="migration-card-content" id="migration-guest-info">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+      <div class="migration-card cloud-card">
+        <div class="migration-card-badge">Account Cloud</div>
+        <div class="migration-card-content" id="migration-cloud-info">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <div class="migration-result-card">
+      <div class="migration-result-title">Result After Merge (High-Water Mark)</div>
+      <div class="migration-result-content" id="migration-merged-info">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+
+    <div class="migration-actions">
+      <button type="button" class="btn-primary migration-btn" id="migration-confirm-btn">Merge &amp; Sync to Cloud</button>
+      <button type="button" class="btn-secondary migration-btn" id="migration-skip-btn">Keep Cloud Only</button>
+      <button type="button" class="btn-ghost migration-btn" id="migration-later-btn">Decide Later</button>
+    </div>
+  </div>
+</div>
+
 <!-- ================= AUTH MODAL ================= -->
 <div id="auth-modal" class="auth-modal" aria-hidden="true">
   <div class="auth-modal-backdrop" id="auth-modal-backdrop"></div>
@@ -343,6 +475,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
 <script src="js/arcadia-cloud.js"></script>
+<script src="js/arcadia-progression.js"></script>
+<script src="js/arcadia-profile.js"></script>
+<script src="js/arcadia-sync.js"></script>
 <script src="js/main.js"></script>
 <script src="js/auth-ui.js"></script>
 <script>
@@ -361,7 +496,7 @@
     var pick = GAMES[Math.floor(Math.random() * GAMES.length)];
     GHStorage.recordPlay(pick.slug);
     document.getElementById('page-transition').classList.add('active');
-    setTimeout(function(){ window.location.href = 'games/' + pick.slug + '/index.html'; }, 320);
+    setTimeout(function(){ window.location.href = 'games/' + pick.slug + '/'; }, 320);
   });
   // Notifications / avatar / login — placeholder interactions
   document.getElementById('notif-btn').addEventListener('click', function(){

@@ -243,7 +243,17 @@ class Game {
           p2Stats: this.player2.stats
         });
 
-        if (window.Arcadia) Arcadia.submitScore('tank-wars', 'Tank Wars', Math.max(this.p1Rounds, this.p2Rounds));
+        // Note: Tank Wars is local 2P multiplayer; global cloud score submission is excluded in Phase 2C
+        // to prevent meaningless 2-3 round count constants from polluting leaderboards.
+        // Local stats tracking in StatsManager continues below.
+        // if (window.Arcadia) Arcadia.submitScore('tank-wars', 'Tank Wars', Math.max(this.p1Rounds, this.p2Rounds));
+        if (window.ArcadiaProgression && typeof window.ArcadiaProgression.recordGameSession === 'function') {
+          window.ArcadiaProgression.recordGameSession('tank-wars', {
+            rounds: Math.max(this.p1Rounds, this.p2Rounds),
+            matchTime: this.matchTimeSeconds,
+            title: 'Tank Wars'
+          });
+        }
 
         window.uiManager?.showWinnerScreen(
           winnerName,

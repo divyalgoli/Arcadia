@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>if(!location.pathname.endsWith('/')&&!location.pathname.endsWith('.html'))location.replace(location.pathname+'/'+location.search+location.hash);</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Flying Superman</title>
@@ -280,6 +281,7 @@
       <p class="instructions">Tap or Press <b>Space</b> to Swing</p>
       <div class="best-badge">🏆 Best: <span id="best-score-start">0</span></div>
       <button id="play-btn" class="btn">PLAY</button>
+      <a href="../../index.html" class="btn btn-secondary" onclick="event.stopPropagation()" style="margin-top:10px;text-decoration:none;display:inline-block;padding:12px 30px;font-size:15px;">← ARCADIA</a>
     </div>
 
     <!-- Countdown Screen -->
@@ -301,6 +303,7 @@
         </div>
       </div>
       <button id="restart-btn" class="btn">PLAY AGAIN</button>
+      <a href="../../index.html" class="btn btn-secondary" onclick="event.stopPropagation()" style="margin-top:10px;text-decoration:none;display:inline-block;padding:12px 30px;font-size:15px;">← ARCADIA</a>
     </div>
 
   </div>
@@ -311,6 +314,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="../../js/firebase-config.js"></script>
 <script src="../../js/arcadia-cloud.js"></script>
+<script src="../../js/arcadia-shell.js"></script>
 <script>
 (function(){
   "use strict";

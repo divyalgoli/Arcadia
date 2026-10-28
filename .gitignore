@@ -47,3 +47,12 @@ desktop.ini
 coverage/
 npm-debug.log*
 pnpm-debug.log*
+
+# Developer scratch scripts and local test harnesses
+scratch/
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

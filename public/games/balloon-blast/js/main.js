@@ -65,18 +65,7 @@ class App {
     if (exitBtn) {
       exitBtn.addEventListener('click', () => {
         this.audio.playClick();
-        const confirmed = confirm('Are you sure you want to exit Balloon Blast?');
-        if (!confirmed) return;
-
-        // window.close() only works on tabs opened by script; most
-        // browsers silently ignore it otherwise. We fall back to a
-        // friendly goodbye message so the button always does *something*.
-        window.close();
-        setTimeout(() => {
-          document.body.innerHTML =
-            '<p style="text-align:center;margin-top:40vh;font-family:sans-serif;color:#fff;">' +
-            'Thanks for playing Balloon Blast! You can close this tab now.</p>';
-        }, 300);
+        window.location.href = '../../index.html';
       });
     }
   }

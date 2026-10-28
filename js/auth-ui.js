@@ -104,25 +104,32 @@
     }
   }
 
-  navAvatar && navAvatar.addEventListener("click", function (e) {
-    e.preventDefault();
-    var user = Arcadia.getCurrentUser();
-    if (!user) {
-      openModal("login");
-      return;
-    }
-    if (confirm("Log out of Arcadia?")) {
-      Arcadia.signOutUser().then(function () {
-        window.ArcadiaToast && ArcadiaToast("Logged out");
-      });
-    }
-  });
+  if (navAvatar && !navAvatar.getAttribute("data-profile-wired")) {
+    navAvatar.setAttribute("data-profile-wired", "true");
+    navAvatar.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (window.ArcadiaProfile && typeof window.ArcadiaProfile.open === "function") {
+        window.ArcadiaProfile.open();
+        return;
+      }
+      var user = Arcadia.getCurrentUser();
+      if (!user) {
+        openModal("login");
+        return;
+      }
+      if (confirm("Log out of Arcadia?")) {
+        Arcadia.signOutUser().then(function () {
+          window.ArcadiaToast && ArcadiaToast("Logged out");
+        });
+      }
+    });
+  }
 
   Arcadia.onAuthChange(function (user) {
     if (user) {
       var initial = (user.displayName || user.email || "P").trim().charAt(0).toUpperCase();
       navAvatar.textContent = initial;
-      navAvatar.title = (user.displayName || user.email) + " — click to log out";
+      navAvatar.title = (user.displayName || user.email) + " — Player Profile";
       navAvatar.classList.add("signed-in");
       loginBtn.textContent = "Log Out";
       loginBtn.onclick = function (e) {
@@ -134,8 +141,8 @@
         }
       };
     } else {
-      navAvatar.textContent = "N";
-      navAvatar.title = "Log in";
+      navAvatar.textContent = "G";
+      navAvatar.title = "Player Profile (Guest)";
       navAvatar.classList.remove("signed-in");
       loginBtn.textContent = "Log In";
       loginBtn.onclick = function (e) {
@@ -145,6 +152,9 @@
     }
     if (typeof window.renderArcadiaLeaderboard === "function") {
       window.renderArcadiaLeaderboard();
+    }
+    if (window.ArcadiaProfile && typeof window.ArcadiaProfile.render === "function") {
+      window.ArcadiaProfile.render();
     }
   });
 })();

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>if(!location.pathname.endsWith('/')&&!location.pathname.endsWith('.html'))location.replace(location.pathname+'/'+location.search+location.hash);</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
   <title>Paint Tag Arena</title>
@@ -67,6 +68,7 @@
         <button class="btn btn-secondary" id="btn-character-select">Character Select</button>
         <button class="btn btn-secondary" id="btn-leaderboard">Leaderboard</button>
         <button class="btn btn-secondary" id="btn-settings-menu">Settings</button>
+        <a href="../../index.html" class="btn btn-secondary" id="btn-exit-portal" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">Exit to Arcadia</a>
       </nav>
 
       <div class="menu-footer-note">Player 1: W A S D to move, Left Shift to Dash &bull; Player 2: I J K L to move, U to Dash &bull; Tag by touching the runner</div>
@@ -505,6 +507,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="../../js/firebase-config.js"></script>
     <script src="../../js/arcadia-cloud.js"></script>
+    <script src="../../js/arcadia-shell.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/player.js"></script>
   <script src="js/collision.js"></script>
